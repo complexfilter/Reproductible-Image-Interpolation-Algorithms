@@ -1,0 +1,41 @@
+function wc = FWT2_PO_1scale_lantao(x,qmf)
+% FWT2_PO -- 2-d MRA wavelet transform (periodized, orthogonal)
+%  Usage
+%    wc = FWT2_PO(x,L,qmf)
+%  Inputs
+%    x     2-d image (n by n array, n dyadic)
+%    L     coarse level
+%    qmf   quadrature mirror filter
+%  Outputs
+%    wc    2-d wavelet transform
+%
+%  Description
+%    A two-dimensional Wavelet Transform is computed for the
+%    array x.  To reconstruct, use IWT2_PO.
+%
+%  See Also
+%    IWT2_PO, MakeONFilter
+%
+% [n,J] = quadlength(x);
+[n1, n2] = size(x);
+wc = x;
+% nc = n;
+% for jscal=J-1:-1:L,
+top = (n2/2+1):n2; bot = 1:(n2/2);
+for ix=1:n1
+    row = wc(ix,1:n2);
+    wc(ix,bot) = DownDyadLo(row,qmf);
+    wc(ix,top) = DownDyadHi(row,qmf);
+end
+top = (n1/2+1):n1; bot = 1:(n1/2);
+for iy=1:n2
+    row = wc(1:n1,iy)';
+    wc(top,iy) = DownDyadHi(row,qmf)';
+    wc(bot,iy) = DownDyadLo(row,qmf)';
+end
+end
+function
+d = aconv(qmf,x);
+n = length(d);
+d = d(1:2:(n-1));
+end
