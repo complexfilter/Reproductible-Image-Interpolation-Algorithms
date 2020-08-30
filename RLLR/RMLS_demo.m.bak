@@ -1,0 +1,179 @@
+
+options = [];
+options.lamda = 0.5;  
+options.deta = 0.01;
+options.gama = 0.01;
+options.th = 8;
+
+options.swin = 3;
+%30:31.9251
+%35:31.9209
+%40:31.92
+%50:31.9180
+%60:31.9175
+%%%小图像时%%%%
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\lena_cut_flat_16.bmp');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\lena_cut_flat_32.bmp'));
+% [height,width,channel] = size(original_HRImg);
+% original_HRImg = original_HRImg(:,:,channel);
+% [height,width,channel] = size(LRImg);
+% figure (1); imshow(LRImg);
+% title('original LR image');
+
+%%%%%大图像时%%%%%
+LRImg = imread('E:\image_interpolation_DCC\test_picture\lena128.bmp');
+original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\lena256.bmp')); 
+%result:32.35
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\baboon128.bmp');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\baboon256.bmp')); 
+
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\peppers128.png');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\peppers256.png')); 
+
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\Cameraman128.bmp');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\Cameraman256.bmp')); 
+
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\boat128.png');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\boat256.png')); 
+
+% LRImg = double(imread('E:\image_interpolation_DCC\test_picture\Barbara128.bmp'));
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\Barbara256.bmp')); 
+% 
+% LRImg = imread('E:\image_interpolation_DCC\test_picture\tower150.png');
+% original_HRImg = double(imread('E:\image_interpolation_DCC\test_picture\tower300.png'));
+%%%%%%%%%%%%%%%%%%
+
+our_HRImg = RMLS_interpolation(LRImg,options);
+
+diff_img = our_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+our_PSNR=10*log10(255^2/mse);
+
+%% the method of lei zhang
+% esintp_HRImg = esintp(LRImg);
+% diff_img = double(esintp_HRImg)-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% PSNR=10*log10(255^2/mse);
+% 
+% figure (3);imshow(esintp_HRImg/255);
+% title(sprintf('esintp HR image, PSNR = %2.2f dB', PSNR));
+% imwrite(uint8(esintp_HRImg), 'esintp_HR_lena256.bmp', 'bmp' );
+%% bilinear
+bilinear_HRImg = bilinearup2(LRImg);
+diff_img = bilinear_HRImg-original_HRImg;
+
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bilinear_PSNR=10*log10(255^2/mse);
+
+figure (4);imshow(bilinear_HRImg/255);
+title(sprintf('bilinear HR image, PSNR = %2.2f dB', bilinear_PSNR));
+
+[bilinear_masked_image,bilinear_fusion_image,bilinear_psnr_vector] = ImageComparsion(our_HRImg,bilinear_HRImg,our_HRImg,original_HRImg);
+bilinear_better_block_num = size(find(bilinear_psnr_vector>0));
+figure (5);imshow(bilinear_masked_image/255);
+title(sprintf('bilinear masked image(our)'));
+
+diff_img = bilinear_fusion_image-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bilinear_fusion_PSNR = 10*log10(255^2/mse);
+figure (6);imshow(bilinear_fusion_image/255);
+title(sprintf('bilinear-our fusion image, PSNR = %2.2f dB', bilinear_fusion_PSNR));
+
+% figure (4);imshow(diff_img/255);
+% imwrite(bilinear_HRImg, 'bilinear_interpolated_HR_lenna.bmp', 'bmp' );
+% imwrite(bilinear_HRImg,'E:\image_interpolation_DCC\test_picture\result\bilinear_HR_lena128.bmp', 'bmp' );
+%% bicubic
+bicubic_HRImg = double(bicubic(LRImg));
+diff_img = bicubic_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bicubic_PSNR=10*log10(255^2/mse);
+
+figure (7);imshow(bicubic_HRImg/255);
+title(sprintf('bicubic HR image, PSNR = %2.2f dB', bicubic_PSNR));
+
+[bicubic_masked_image,bicubic_fusion_image,bicubic_psnr_vector] = ImageComparsion(our_HRImg,bicubic_HRImg,our_HRImg,original_HRImg);
+bicubic_better_block_num = size(find(bicubic_psnr_vector>0));
+figure (8);imshow(bicubic_masked_image/255);
+title(sprintf('bicubic masked image(our)'));
+
+diff_img = bicubic_fusion_image-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bicubic_fusion_PSNR = 10*log10(255^2/mse);
+figure (9);imshow(bicubic_fusion_image/255);
+title(sprintf('bicubic-our fusion image, PSNR = %2.2f dB', bicubic_fusion_PSNR));
+%% Xiaoli Wu
+% SAI_HRImg = double(imread('SAI_tower300.pgm')); 
+% original_HRImg_PGM = double(imread('E:\image_interpolation_DCC\ARInterpolation\tower300.pgm')); 
+% % SAI_HRImg = double(imread('SAI_lena256.pgm')); 
+% % original_HRImg_PGM = double(imread('E:\image_interpolation_DCC\ARInterpolation\lena256.pgm')); 
+% % 
+% % diff_img = SAI_HRImg-original_HRImg_PGM;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg_PGM));
+% % SAI_PSNR=10*log10(255^2/mse);
+% % figure (10);imshow(SAI_HRImg/255);
+% % title(sprintf('SAI HR image, PSNR = %2.2f dB', SAI_PSNR));
+% 
+% 
+% 
+% % [SAI_masked_image,SAI_fusion_image,SAT_psnr_vector] = ImageComparsion(SAI_HRImg,bicubic_HRImg,SAI_HRImg,original_HRImg_PGM);
+% % SAI_better_block_num = size(find(SAT_psnr_vector>0));
+% % figure (17);imshow(SAI_masked_image/255);
+% % title(sprintf('SAI masked image(bicubic)'));
+% 
+% % [SAI_masked_image,SAI_fusion_image,SAT_psnr_vector] = ImageComparsion(our_HRImg,SAI_HRImg,our_HRImg,original_HRImg_PGM);
+% % SAI_better_block_num = size(find(SAT_psnr_vector>0));
+% % figure (11);imshow(SAI_masked_image/255);
+% % title(sprintf('SAI masked image(our)'));
+% 
+% diff_img = SAI_fusion_image-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% SAI_fusion_PSNR = 10*log10(255^2/mse);
+% figure (10);imshow(SAI_fusion_image/255);
+% title(sprintf('SAI fusion image, PSNR = %2.2f dB', SAI_fusion_PSNR));
+%% xinfeng
+[nledi_HRImg,LS_masked] = nledi(LRImg);
+% nledi_HRImg = double(imread('nledi_HR_lena256.bmp'));
+diff_img = nledi_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+nledi_PSNR=10*log10(255^2/mse);
+figure (12);imshow(nledi_HRImg/255);
+title(sprintf('NLEDI HR image, PSNR = %2.2f dB', nledi_PSNR));
+% nledi_HRImg = uint8(nledi_HRImg);
+% imwrite(nledi_HRImg,'nledi_HR_lena256.bmp' );
+% diff_img = our_HRImg - nledi_HRImg;
+% figure (12);imshow(diff_img/255);
+% title(sprintf('difference image'));
+
+% [nledi_masked_image,nledi_fusion_image,nledi_psnr_vector] = ImageComparsion(bicubic_HRImg,nledi_HRImg,LS_masked,original_HRImg);
+% nledi_better_block_num = size(find(nledi_psnr_vector>0));
+% figure (13);imshow(nledi_masked_image);
+% title(sprintf('nledi masked image(bicubic-LS)'));
+% 
+[nledi_masked_image,nledi_fusion_image,nledi_psnr_vector] = ImageComparsion(nledi_HRImg,bicubic_HRImg,nledi_HRImg,original_HRImg);
+nledi_better_block_num = size(find(nledi_psnr_vector>0));
+figure (13);imshow(nledi_masked_image/255);
+title(sprintf('nledi masked image(bicubic)'));
+
+diff_img = nledi_fusion_image-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+nledi_fusion_PSNR = 10*log10(255^2/mse);
+figure (14);imshow(nledi_fusion_image/255);
+title(sprintf('NLEDI-bicubic fusion image, PSNR = %2.2f dB', nledi_fusion_PSNR));
+
+% 
+% [nledi_masked_image,nledi_fusion_image,nledi_psnr_vector] = ImageComparsion(nledi_HRImg,our_HRImg,LS_masked,original_HRImg);
+% nledi_better_block_num = size(find(nledi_psnr_vector>0));
+% figure (15);imshow(nledi_masked_image);
+% title(sprintf('nledi masked image(our-LS)'));
+
+[nledi_masked_image,nledi_fusion_image,nledi_psnr_vector] = ImageComparsion(our_HRImg,nledi_HRImg,our_HRImg,original_HRImg);
+nledi_better_block_num = size(find(nledi_psnr_vector>0));
+figure (15);imshow(nledi_masked_image/255);
+title(sprintf('nledi masked image(our)'));
+% 
+diff_img = nledi_fusion_image-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+nledi_fusion_PSNR = 10*log10(255^2/mse);
+figure (16);imshow(nledi_fusion_image/255);
+title(sprintf('NLEDI-our fusion image, PSNR = %2.2f dB', nledi_fusion_PSNR));
+
