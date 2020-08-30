@@ -1,0 +1,441 @@
+
+options = [];
+options.lamda = 0.5;
+% options.deta = 0.01;
+options.deta = 0.005;
+options.gama = 0.1;
+options.th = 8;
+options.win = 5;
+options.swin = 3;
+
+basic_number = 0;
+for im_num = 1:12
+
+if im_num == 1
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_airplane.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_airplane.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_airplane.tif', 'HR_airplane.pgm');
+% original_HRImg_pgm = double(imread('HR_airplane.pgm'));
+end
+
+if im_num == 2
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_lena.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_lena.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_lena.tif', 'HR_lena.pgm');
+% original_HRImg_pgm = double(imread('HR_lena.pgm'));
+end
+
+if im_num == 3
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\Cameraman256.bmp', 'Cameraman256.pgm');
+% original_HRImg_pgm = double(imread('Cameraman256.pgm'));
+end
+
+% if im_num == 4
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\Cameraman256.bmp', 'Cameraman256.pgm');
+% original_HRImg_pgm = double(imread('Cameraman256.pgm'));
+% end
+
+if im_num == 4
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_cap.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_cap.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_cap.tif', 'HR_cap.pgm');
+% original_HRImg_pgm = double(imread('HR_cap.pgm'));
+end
+
+if im_num == 5
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_flowers.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_flowers.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_flowers.tif', 'HR_flowers.pgm');
+% original_HRImg_pgm = double(imread('HR_flowers.pgm'));
+end
+
+if im_num == 6
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_girl.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_girl.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_girl.tif', 'HR_girl.pgm');
+% original_HRImg_pgm = double(imread('HR_girl.pgm'));
+end
+
+if im_num == 7
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_door.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_door.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_door.tif', 'HR_door.pgm');
+% original_HRImg_pgm = double(imread('HR_door.pgm'));
+end
+
+if im_num == 8
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_peppers.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_peppers.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_door.tif', 'HR_peppers.pgm');
+% original_HRImg_pgm = double(imread('HR_peppers.pgm'));
+end
+
+if im_num == 9
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_splash.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_splash.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_splash.tif', 'HR_splash.pgm');
+% original_HRImg_pgm = double(imread('HR_splash.pgm'));
+end
+
+if im_num == 10
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\baboon128.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\baboon256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\baboon256.bmp', 'baboon256.pgm');
+% original_HRImg_pgm = double(imread('baboon256.pgm'));
+end
+
+if im_num == 11
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\tower150.png'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\tower300.png'));
+% convertPGM('E:\xmliu\picture_base\graypictures\tower300.png', 'tower300.pgm');
+% original_HRImg_pgm = double(imread('tower300.pgm'));
+end
+
+if im_num == 12
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_butterfly.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_butterfly.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_butterfly.bmp', 'HR_butterfly.pgm');
+% original_HRImg_pgm = double(imread('HR_butterfly.pgm'));
+end
+% %%%%%%%%%%%%%%%%%%%%%%%%
+
+% [LRImg,outputfile] = downsample_avergae(original_HRImg);
+% LRImg= downsample_direct(original_HRImg);
+% LRImg_pgm = downsample_avergae_pgm(original_HRImg_pgm);
+% LRImg = downsample(original_HRImg);
+% options.lamda = 0.0005; %cameraman0.5:30.5465,0.05:30.5565,0.005:30.5999,0.00005,30.6635 
+% LRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut_32.bmp'));
+% original_HRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut.bmp')); 
+% original_HRImg = original_HRImg(:,:,3);
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_peppers.tif'));
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_peppers.tif'));
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\A_down.png'));
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\A.png'));
+
+
+[height,width,channel] = size(LRImg);
+original_HRImg = original_HRImg(:,:,channel);
+options.original_HRImg = original_HRImg;
+
+%% LAZA
+% % t0_LAZA = cputime;
+% % LRImg_LAZA = uint8(LRImg);
+% % LAZA_HRImg = double(LAZA(LRImg_LAZA));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,LAZA_HRImg);
+% % 
+% % time_LAZA = cputime-t0_LAZA;%(butterfly,0.56s,28.70)(cameraman,0.22s,25.60)
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', LAZA_PSNR,ssim,time_LAZA,FSIM));
+% % % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_butterfly.bmp', 'bmp' );
+% % % % 
+% % % % diff_img = diff_img + 128;
+% % % % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_butterfly.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+t0 = cputime; 
+kernel = make_kernel(options.swin);
+options.kernel = kernel / sum(sum(kernel));%normalization
+
+options.weight_fg = 1;%%代表用bilateral weights
+options.our_method = double(bicubic(LRImg));
+our_HRImg = RMLS_interpolation(LRImg,options);
+
+diff_img = our_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+our_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,our_HRImg);
+FSIM = FeatureSIM(original_HRImg,our_HRImg);
+
+figure (basic_number+im_num);imshow(our_HRImg/255);
+time1=cputime-t0;%(butterfly,381.1875s,30.32)(cameraman, 105.95s,25.85)
+title(sprintf('RLLR HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', our_PSNR,mse,ssim,time1,FSIM));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_butterfly.bmp', 'bmp' );
+% % diff_img = diff_img + 128;
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_butterfly.bmp', 'bmp' );
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of Xin Li
+% % t0_NEDI = cputime;
+% % for i=1:1
+% %     NEDI_HRImg=sri(LRImg,1);
+% % end
+% % diff_img = double(NEDI_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(diff_img));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,NEDI_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,NEDI_HRImg);
+% % 
+% % time_NEDI = cputime-t0_NEDI;%(butterfly,14.16s,29.67)(cameraman,5.42s,25.80)
+% % figure (3+(im_num-1)*5);imshow(NEDI_HRImg/255);
+% % title(sprintf('NEDI HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', PSNR,mse,ssim,time_NEDI,FSIM));
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % t0_DFDF = cputime;
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,esintp_HRImg);
+% % 
+% % time_DFDF = cputime-t0_DFDF;%(butterfly,14.16s,29.67)(cameraman,5.42s,25.80)
+% % figure (4+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', PSNR,mse,ssim,time_DFDF,FSIM));
+% imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_butterfly.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_butterfly.bmp', 'bmp' );
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Method of Xinfeng
+% % t0_enledi = cputime;
+% % options1 = [];
+% % options1.count_win = 0;
+% % options1.win_max = 5;
+% % options1.win_min = 5;
+% % options1.swin=3;
+% % options1.th = 8;
+% % options1.MP =30;
+% % % enledi_HRImg = nledi(LRImg,options1);
+% % enledi_HRImg = nledi(LRImg);
+% % diff_img = enledi_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % enledi_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,enledi_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,enledi_HRImg);
+% % 
+% % time_enledi = cputime-t0_enledi;
+% % figure (5+(im_num-1)*5);imshow(enledi_HRImg/255);
+% % title(sprintf('eNLEDI HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', enledi_PSNR,mse,ssim,time_enledi,FSIM));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % method of Xiaolin Wu
+% t0_SAI = cputime;
+% !ARInterpolation.exe 'outputfile' SAI_HRImg.pgm
+% SAI_HRImg = double(imread('SAI_HRImg.pgm'));
+% 
+% diff_img = SAI_HRImg-original_HRImg_pgm;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(diff_img));
+% SAI_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg_pgm,SAI_HRImg);
+% 
+% time_SAI = cputime-t0_SAI;
+% figure (6+(im_num-1)*5);imshow(SAI_HRImg/255);
+% title(sprintf('SAI HR image,PSNR = %2.2f dB, mse = %2.4f , time = %2.2f', SAI_PSNR,mse,ssim,time_SAI));
+
+%% bilinear
+% t0_bilinear = cputime;
+% bilinear_HRImg = bilinearup2(LRImg);
+% diff_img = bilinear_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bilinear_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% 
+% time_bilinear = cputime-t0_bilinear;
+% figure (7+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% title(sprintf('bilinear HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f', bilinear_PSNR,mse,ssim,time_bilinear));
+% imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_butterfly.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_butterfly.bmp', 'bmp' );
+
+
+
+
+%% bicubic
+% % t0_bicubic = cputime;
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,bicubic_HRImg);
+% % 
+% % time_bicubic = cputime-t0_bicubic;
+% % figure (6+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', bicubic_PSNR,mse,ssim,time_bicubic,FSIM));
+% imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_butterfly.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_butterfly.bmp', 'bmp' );
+end
+
+
+options = [];
+options.lamda = 0.5;
+% options.deta = 0.01;
+options.deta = 0.005;
+options.gama = 0.1;
+options.th = 8;
+options.win = 5;
+options.swin = 3;
+
+basic_number = 0;
+for im_num = 1:12
+
+if im_num == 1
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_airplane.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_airplane.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_airplane.tif', 'HR_airplane.pgm');
+% original_HRImg_pgm = double(imread('HR_airplane.pgm'));
+end
+
+if im_num == 2
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_lena.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_lena.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_lena.tif', 'HR_lena.pgm');
+% original_HRImg_pgm = double(imread('HR_lena.pgm'));
+end
+
+if im_num == 3
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\Cameraman256.bmp', 'Cameraman256.pgm');
+% original_HRImg_pgm = double(imread('Cameraman256.pgm'));
+end
+
+% if im_num == 4
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\Cameraman256.bmp', 'Cameraman256.pgm');
+% original_HRImg_pgm = double(imread('Cameraman256.pgm'));
+% end
+
+if im_num == 4
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_cap.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_cap.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_cap.tif', 'HR_cap.pgm');
+% original_HRImg_pgm = double(imread('HR_cap.pgm'));
+end
+
+if im_num == 5
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_flowers.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_flowers.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_flowers.tif', 'HR_flowers.pgm');
+% original_HRImg_pgm = double(imread('HR_flowers.pgm'));
+end
+
+if im_num == 6
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_girl.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_girl.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_girl.tif', 'HR_girl.pgm');
+% original_HRImg_pgm = double(imread('HR_girl.pgm'));
+end
+
+if im_num == 7
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_door.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_door.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_door.tif', 'HR_door.pgm');
+% original_HRImg_pgm = double(imread('HR_door.pgm'));
+end
+
+if im_num == 8
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_peppers.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_peppers.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_door.tif', 'HR_peppers.pgm');
+% original_HRImg_pgm = double(imread('HR_peppers.pgm'));
+end
+
+if im_num == 9
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_splash.tif'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_splash.tif'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_splash.tif', 'HR_splash.pgm');
+% original_HRImg_pgm = double(imread('HR_splash.pgm'));
+end
+
+if im_num == 10
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\baboon128.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\baboon256.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\baboon256.bmp', 'baboon256.pgm');
+% original_HRImg_pgm = double(imread('baboon256.pgm'));
+end
+
+if im_num == 11
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\tower150.png'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\tower300.png'));
+% convertPGM('E:\xmliu\picture_base\graypictures\tower300.png', 'tower300.pgm');
+% original_HRImg_pgm = double(imread('tower300.pgm'));
+end
+
+if im_num == 12
+LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_butterfly.bmp'));
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_butterfly.bmp'));
+% convertPGM('E:\xmliu\picture_base\graypictures\HR_butterfly.bmp', 'HR_butterfly.pgm');
+% original_HRImg_pgm = double(imread('HR_butterfly.pgm'));
+end
+% %%%%%%%%%%%%%%%%%%%%%%%%
+
+% [LRImg,outputfile] = downsample_avergae(original_HRImg);
+% LRImg= downsample_direct(original_HRImg);
+% LRImg_pgm = downsample_avergae_pgm(original_HRImg_pgm);
+% LRImg = downsample(original_HRImg);
+% options.lamda = 0.0005; %cameraman0.5:30.5465,0.05:30.5565,0.005:30.5999,0.00005,30.6635 
+% LRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut_32.bmp'));
+% original_HRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut.bmp')); 
+% original_HRImg = original_HRImg(:,:,3);
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\LR_peppers.tif'));
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_peppers.tif'));
+% LRImg = double(imread('E:\xmliu\picture_base\graypictures\A_down.png'));
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\A.png'));
+
+
+[height,width,channel] = size(LRImg);
+original_HRImg = original_HRImg(:,:,channel);
+options.original_HRImg = original_HRImg;
+
+%% LAZA
+% % t0_LAZA = cputime;
+% % LRImg_LAZA = uint8(LRImg);
+% % LAZA_HRImg = double(LAZA(LRImg_LAZA));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % FSIM = FeatureSIM(original_HRImg,LAZA_HRImg);
+% % 
+% % time_LAZA = cputime-t0_LAZA;%(butterfly,0.56s,28.70)(cameraman,0.22s,25.60)
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', LAZA_PSNR,ssim,time_LAZA,FSIM));
+% % % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_butterfly.bmp', 'bmp' );
+% % % % 
+% % % % diff_img = diff_img + 128;
+% % % % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_butterfly.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+t0 = cputime; 
+kernel = make_kernel(options.swin);
+options.kernel = kernel / sum(sum(kernel));%normalization
+
+options.weight_fg = 1;%%代表用bilateral weights
+options.our_method = double(bicubic(LRImg));
+our_HRImg = RMLS_interpolation(LRImg,options);
+
+diff_img = our_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+our_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,our_HRImg);
+FSIM = FeatureSIM(original_HRImg,our_HRImg);
+
+figure (basic_number+im_num);imshow(our_HRImg/255);
+time1=cputime-t0;%(butterfly,381.1875s,30.32)(cameraman, 105.95s,25.85)
+title(sprintf('RLLR HR image,PSNR = %2.2f dB, mse = %2.4f , SSIM = %2.5f, time = %2.2f,FSIM = %2.5f', our_PSNR,mse,ssim,time1,FSIM));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_butterfly.bmp', 'bmp' );
+% % diff_img = diff_img + 128;
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_butterfly.bmp', 'bmp' );
+% % 
+
+
+end

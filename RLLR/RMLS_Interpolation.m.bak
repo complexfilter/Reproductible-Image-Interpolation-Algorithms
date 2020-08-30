@@ -1,0 +1,293 @@
+% 2X enlarge
+
+function y=RMLS_interpolation(x,options)
+     
+     options.bilinear_number = 0;
+     options.y_bilinear = double(bilinearup2(x));
+     options.BW = edge(options.y_bilinear,'canny');
+     
+     [y1,bilinear_number]=first_pass(x,options);
+     options.bilinear_number = bilinear_number;
+     [y,bilinear_number]=second_pass(y1,options);
+     x=y;
+
+
+%% first pass
+function [y,bilinear_number]=first_pass(x,options)
+MP=30;%pad size
+[m,n]=size(x);
+x=double(x);
+y = double(bicubic(x));
+%pad orignal image
+Eim = [repmat(y(1,:),MP,1);y;repmat(y(m,:),MP,1)];
+Eim = [repmat(Eim(:,1),1,MP),Eim,repmat(Eim(:,n),1,MP)];
+rang=255;
+Eim=Eim+rang;
+%threshold
+% th=10000;
+win=5;%trainnig window
+swin=options.swin;%similarity window
+cnt=1;
+lamda = options.lamda;
+deta = options.deta;
+gama = options.gama;
+for i=-2*(win-1)-1:2:2*win
+    for j=-2*(win-1)-1:2:2*win
+        nx(cnt)=j;%行向量
+        ny(cnt)=i;%列向量，（nx，ny）代表一个点
+        cnt=cnt+1;
+    end
+end
+cnt = 1;
+for i=-2*swin:2:2*swin
+    for j=-2*swin:2:2*swin
+        nx_neighbor(cnt)=j;%行向量
+        ny_neighbor(cnt)=i;%列向量，（nx，ny）代表一个点
+        cnt=cnt+1;
+    end
+end
+iy=[-1 -1  1 1];
+ix=[-1  1 -1 1];
+my=[-1 -1  1 1];
+mx=[-1  1 -1 1];
+
+[M N]=size(Eim);%M行N列
+    pixel_number = 2*win*2*win;  
+    unlabel_number = (2*win-1)^2;
+    proceeded_unlabel_number = floor(unlabel_number/2); 
+    
+    w_hat = zeros(1,5,proceeded_unlabel_number);
+    Y_hat = zeros(1,proceeded_unlabel_number);
+    interpolated_pixel_transfer = zeros(M*N,5);
+count = 1;
+
+for i=1+MP+1:2:M-MP+1
+   for j=1+MP+1:2:N-MP+1
+      fprintf('%d_%d\n',i,j);
+      for k=1:4
+      label_neighbor(:,k)=diag(Eim(i+2*iy(k)+ny,j+2*ix(k)+nx));
+      end
+      label_neighbor_extend = [label_neighbor ones(2*win*2*win,1)]';
+      label_value = diag(Eim(i+ny,j+nx))';
+
+      unlabel_neighbor = diag(Eim(i+my,j+mx));
+      unlabel_neighbor_extend = [unlabel_neighbor' 1]';
+      
+      center = Eim(i-swin:i+swin,j-swin:j+swin);
+      
+      %compute the similarity between label points and the unlabeled pixel to
+      %interpolated
+      k=1;
+      for ii=i-2*(win-1)-1:2:i+2*win
+          for jj=j-2*(win-1)-1:2:j+2*win
+              sample = Eim(ii-2*swin:2:ii+2*swin,jj-2*swin:2:jj+2*swin);
+              weight(k,1) = Computweight(center, sample,swin);
+              k=k+1;              
+          end
+      end
+      weight = weight./sum(weight);
+      
+%%%%测试%%%%%%%%%  
+%       neighbor_size = (2*swin+1)^2;
+%       center = Eim(i-swin:i+swin,j-swin:j+swin);
+%       center = reshape(center,neighbor_size ,1)';
+%       k=1;
+%       for ii=i-2*(win-1)-1:2:i+2*win
+%           for jj=j-2*(win-1)-1:2:j+2*win
+%               block(:,k) = diag(Eim(ii+ny_neighbor,jj+nx_neighbor));
+%               k=k+1;              
+%           end
+%       end
+%       block = block';
+%       [D,theta] = EuDist2(block,center);
+%%%%%%%%%%%%%%%%%   
+ 
+         if count>1  
+             if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+%                   non_RMLS_count = non_RMLS_count+1;
+              else
+              [S,Y_hat,w_hat] = GetInformationForUnlabel_firstpass(i,j,win,swin,Eim,interpolated_pixel_transfer);
+              [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda, S, Y_hat, deta,w_hat, gama);
+              options.bilinear_number = options.bilinear_number+1;
+              end
+         else
+              if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+%                   non_RMLS_count = non_RMLS_count+1;
+              else
+              [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda);
+              options.bilinear_number = options.bilinear_number+1;
+              
+             end
+         end
+
+      
+      pixel_no = i*N+j;
+      interpolated_pixel_transfer(pixel_no,:) = wi;   
+
+%       if var(unlabel_neighbor)>th
+          Eim(i,j) = fxi;
+          tempval=fxi-rang;
+         if tempval>=0&tempval<=255
+              y((i-MP),(j-MP))=tempval;
+         end 
+%       end
+      count = count+1;
+   end
+end
+bilinear_number = options.bilinear_number;
+%% second pass
+function [y,bilinear_number]=second_pass(x,options)
+y=x;
+MP=30;
+[m,n]=size(x);
+Eim = [repmat(x(1,:),MP,1);x;repmat(x(m,:),MP,1)];
+Eim = [repmat(Eim(:,1),1,MP),Eim,repmat(Eim(:,n),1,MP)];
+my=[0 0 1 -1];
+mx=[-1 1 0 0];
+% th=10000;
+win=4;
+swin=3;
+cnt=1;
+lamda = options.lamda;
+deta = options.deta;
+gama = options.gama;
+rang=255;
+Eim=Eim+rang;
+for i=-(win-1):win
+    for j=-(win-1):win
+        nx(cnt)=i-j;ny(cnt)=i+j-1;cnt=cnt+1;
+    end
+end
+[M N]=size(Eim);%M行N列
+w_hat = zeros(1,5,24);%在一个训练窗内已经插出来的unlabel点的变换矩阵
+Y_hat = zeros(1,24);%在一个训练窗内已经插出来的unlabel点的亮度值的行向量
+interpolated_pixel_transfer = zeros(M*N,5);%用来存储图像内所有点的变换矩阵，label点标记成0
+count = 1;
+for i=1+MP+1:2:M-MP
+   for j=1+MP:2:N-MP
+      fprintf('%d_%d\n',i,j);
+      center = Eim(i-swin:i+swin,j-swin:j+swin);
+      for k=1:(2*win)^2
+          r(k,1)=Eim(i+ny(k),j+nx(k));
+          pos(k,1)=i+ny(k);pos(k,2)=j+nx(k);
+          C(k,:)=[Eim(i+2*my(1)+ny(k),j+2*mx(1)+nx(k)) Eim(i+2*my(2)+ny(k),j+2*mx(2)+nx(k)) Eim(i+2*my(3)+ny(k),j+2*mx(3)+nx(k)) Eim(i+2*my(4)+ny(k),j+2*mx(4)+nx(k))];
+          sample = Eim(pos(k,1)-2*swin:2:pos(k,1)+2*swin,pos(k,2)-2*swin:2:pos(k,2)+2*swin);
+          weight(k,1) = Computweight(center, sample,swin);
+      end
+      weight = weight./sum(weight);
+      label_value = r';
+      label_neighbor_extend = [C ones(2*win*2*win,1)]';
+      unlabel_neighbor = diag(Eim(i+my,j+mx));
+      unlabel_neighbor_extend = [unlabel_neighbor' 1]';
+      
+      if count>1
+          if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+%                   non_RMLS_count = non_RMLS_count+1;
+           else                
+                  [S,Y_hat,w_hat] = GetInformationForUnlabel_secondpass(i,j,pos,win,swin,Eim,interpolated_pixel_transfer,0);
+                  [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda, S, Y_hat, deta,w_hat, gama);
+                  options.bilinear_number = options.bilinear_number+1;
+           end
+      else
+           if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+          else
+                 [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda);
+                 options.bilinear_number = options.bilinear_number+1;
+          end
+      end
+       
+      pixel_no = i*N+j;
+      interpolated_pixel_transfer(pixel_no,:) = wi;
+%       if var(unlabel_neighbor)>th
+          Eim(i,j) = fxi;
+          tempval=fxi-rang;
+         if tempval>=0&tempval<=255
+              y((i-MP),(j-MP))=tempval;
+         end 
+%       end
+      count = count+1;
+   end
+end
+
+ count = 1;
+for i=1+MP:2:M-MP
+   for j=1+MP+1:2:N-MP
+       fprintf('%d_%d\n',i,j);
+       center = Eim(i-swin:i+swin,j-swin:j+swin);
+        for k=1:(2*win)^2
+          r(k,1)=Eim(i+ny(k),j+nx(k));
+          pos(k,1)=i+ny(k);pos(k,2)=j+nx(k);
+          C(k,:)=[Eim(i+2*my(1)+ny(k),j+2*mx(1)+nx(k)) Eim(i+2*my(2)+ny(k),j+2*mx(2)+nx(k)) Eim(i+2*my(3)+ny(k),j+2*mx(3)+nx(k)) Eim(i+2*my(4)+ny(k),j+2*mx(4)+nx(k))];
+          sample = Eim(pos(k,1)-2*swin:2:pos(k,1)+2*swin,pos(k,2)-2*swin:2:pos(k,2)+2*swin);
+          weight(k,1) = Computweight(center, sample,swin);
+        end
+      label_value = r';
+      label_neighbor_extend = [C ones(2*win*2*win,1)]';
+      unlabel_neighbor = diag(Eim(i+my,j+mx));
+      unlabel_neighbor_extend = [unlabel_neighbor' 1]';
+      weight = weight./sum(weight);
+      
+      if count>1
+          if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+           else
+             [S,Y_hat,w_hat] = GetInformationForUnlabel_secondpass(i,j,pos,win,swin,Eim,interpolated_pixel_transfer,1);
+             [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda, S, Y_hat, deta,w_hat, gama);
+             options.bilinear_number = options.bilinear_number+1;
+           end
+      else
+           if var(unlabel_neighbor)<options.th 
+                  deta = 0;
+                  gama = 0;
+                  fxi = options.y_bilinear((i-MP),(j-MP))+255;
+                  wi = [0.25,0.25,0.25,0.25,0];
+%                   fxi = sum(wi'.*unlabel_neighbor_extend);
+%                   options.bilinear_number = options.bilinear_number+1;
+             else
+                 [wi, fxi] = RMLS_mm(unlabel_neighbor_extend, weight, label_value, label_neighbor_extend, lamda);
+                 options.bilinear_number = options.bilinear_number+1;
+             end
+      end
+       
+      pixel_no = i*N+j;
+      interpolated_pixel_transfer(pixel_no,:) = wi;
+%       if var(unlabel_neighbor)>th
+          Eim(i,j) = fxi;
+          tempval=fxi-rang;
+         if tempval>=0&tempval<=255
+              y((i-MP),(j-MP))=tempval;
+         end 
+%       end
+      count = count+1;
+   end
+end
+bilinear_number = options.bilinear_number;

@@ -1,0 +1,117 @@
+function rec_frame = first_pass(LRImg,part1_luma_for,part1_luma_back,part2_luma_for,part2_luma_back,options)
+width = options.width/2;
+height = options.height/2;
+
+win=options.win;%trainnig window 其大小应该根据mode decision的结果进行调整，现在暂不考虑
+swin=options.swin;%similarity window
+MP = options.MP;
+
+%%%%%%%%%%%%%parameters for weights compuation%%%%%%%
+kernel = options.kernel;
+w = 2*swin+1;
+L = (2*win)^2;
+X=zeros(w*w,L);
+%%%%%%%%%%%%%padding part1 images%%%%%%%%%%%%%%%%
+y = double(bicubic(LRImg));
+Eim = [repmat(y(1,:),MP,1);y;repmat(y(m,:),MP,1)];
+Eim = [repmat(Eim(:,1),1,MP),Eim,repmat(Eim(:,n),1,MP)];
+
+HRImg = Eim;
+
+y = double(bicubic(part1_luma_for));
+Eim = [repmat(y(1,:),MP,1);y;repmat(y(m,:),MP,1)];
+Eim = [repmat(Eim(:,1),1,MP),Eim,repmat(Eim(:,n),1,MP)];
+
+HRImg_part1_for = Eim;
+
+y = double(bicubic(part1_luma_back));
+Eim = [repmat(y(1,:),MP,1);y;repmat(y(m,:),MP,1)];
+Eim = [repmat(Eim(:,1),1,MP),Eim,repmat(Eim(:,n),1,MP)];
+
+HRImg_part1_back = Eim;
+
+[M N]=size(HRImg);
+%%%%%%%%%%%%%%pixel repetition of part2 frames%%%%%%%%%%%%%%
+for i=1:2
+   for j=1:2
+      HRImg_part2_for(i:2:2*M,j:2:2*N)=part2_luma_for;
+      HRImg_part2_back(i:2:2*M,j:2:2*N)=part2_luma_back;
+   end
+end
+%%%%%%%%determine spatial known pixels in the training window%%%%%%%
+cnt=1;
+for i=-2*(win-1)-1:2:2*win
+    for j=-2*(win-1)-1:2:2*win
+        nx(cnt)=j;%行向量
+        ny(cnt)=i;%列向量，（nx，ny）代表一个点
+        cnt=cnt+1;
+    end
+end
+
+%%%%%%%%determine four spatial neighors%%%%%%%%%%%%%
+iy=[-1 -1  1 1];
+ix=[-1  1 -1 1];
+my=[-1 -1  1 1];
+mx=[-1  1 -1 1];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%main interpolation process%%%%%%%%%%%%%%%%%
+count = 1;
+for i=1+MP+1:2:M-MP+1
+   for j=1+MP+1:2:N-MP+1
+       
+      %%%%%%%%%%motion vector of the current pixel to be interpolated%%%%%
+      part1_mv_for_x = 0;
+      part1_mv_for_y = 0;
+      part1_mv_back_x = 0;
+      part1_mv_back_y = 0;
+      
+      part2_mv_for_x = round(part1_mv_for_x/2);
+      part2_mv_for_y = round(part1_mv_for_y/2);
+      part2_mv_back_x = round(part1_mv_back_x/2);
+      part2_mv_back_y = round(part1_mv_back_y/2);
+      %%%%%%%%%%%%determine the spatial-temporal neighbors%%%%%%%%%%%%%%
+      spatial_neighbor = diag(HRImg(i+my,j+mx));
+      temporal_neighbor = [HRImg_part2_for(i+part2_mv_for_y,j+part2_mv_for_x) HRImg_part2_back(i+part2_mv_back_y,j+part2_mv_back_x)];
+      neighbor = [spatial_neighbor', temporal_neighbor];
+      neighbor_extend = [neighbor 1]';
+      
+      if count>1  
+         if var(neighbor)<options.th 
+            wi = [0.25,0.25,0.25,0.25,0.25,0.25,0];
+            fxi = wi.* neighbor_extend;
+         else
+            for k=1:4
+                label_spatial_neighbor(:,k)=diag(HRImg(i+2*iy(k)+ny,j+2*ix(k)+nx));
+            end 
+            %%注意这里应该加入MV，而且这里的帧不再是HRImg_for和HRImg_back,而应该是和当前帧同一单元的前后两帧，因此
+            %%这里的MV读取应该注意
+            label_temporal_for_neighbor = diag(HRImg_part1_for(i+ny+part1_mv_for_y,j+nx+part1_mv_for_x)); 
+            label_temporal_back_neighbor = diag(HRImg_part1_back(i+ny+part1_mv_back_y,j+nx+part1_mv_back_x)); 
+            label_temporal_neighbor = [label_temporal_for_neighbor label_temporal_back_neighbor];
+            label_neighbor = [label_spatial_neighbor label_temporal_neighbor];
+            label_neighbor_extend = [label_neighbor ones(2*win*2*win,1)]';
+            
+            label_value = diag(HRImg(i+ny,j+nx))';
+            
+            center = HRImg(i-swin:i+swin,j-swin:j+swin);%在高分辨率图像上取值
+            CB_kernel = center.*kernel;
+            CB_kernel = CB_kernel(:);
+            CB_kernel = repmat(CB_kernel,1,L);%重复L遍
+            
+            k=1;
+            for ii=i-2*(win-1)-1:2:i+2*win
+                for jj=j-2*(win-1)-1:2:j+2*win
+             sample = Eim(ii-2*swin:2:ii+2*swin,jj-2*swin:2:jj+2*swin);%对于label sample，similar win是在低分辨率图像取的
+             sample_kernel = sample.*kernel;
+             sample_kernel = sample_kernel(:);
+             X(:,k) = sample_kernel;
+             location_diff(:,k) = [ii-i,jj-j];
+             k=k+1;              
+          end
+      end
+         end
+      
+      
+      
+   end
+end

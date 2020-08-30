@@ -1,0 +1,1023 @@
+
+options = [];
+options.lamda = 0.5;  
+options.deta = 0.01;
+options.gama = 0.01;
+options.th = 8;
+options.win = 5;
+options.swin = 3;
+
+% LRImg = imread('lena128.bmp');
+% original_HRImg = double(imread('lena256.bmp')); %0.05:31.9136,0.005:31.9814,0.008:31.9818,0.0005:31.9675
+%result:32.35
+% LRImg = imread('LR_airplane.bmp');
+% original_HRImg = double(imread('HR_airplane.bmp')); 
+
+% LRImg = imread('peppers128.png');
+% original_HRImg = double(imread('peppers256.png')); 
+
+% LRImg = imread('Cameraman128.bmp');
+% original_HRImg = double(imread('Cameraman256.bmp')); 
+
+% LRImg = imread('boat128.png');
+% original_HRImg = double(imread('boat256.png')); 
+
+% LRImg = double(imread('E:\xmliu\test_picture\Barbara256.bmp'));
+% original_HRImg = double(imread('E:\xmliu\test_picture\Barbara512.bmp')); 
+% 
+% LRImg = imread('tower150.png');
+% original_HRImg = double(imread('tower300.png'));
+% LRImg = imread('E:\xmliu\test_picture\LR_airplane.bmp');
+% original_HRImg = double(imread('E:\xmliu\test_picture\HR_airplane.bmp'));
+% 
+% for im_num = 1:9
+
+%%%lena
+im_num = 1;
+
+% % if im_num == 1
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_lena.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_lena.tif'));
+% % 
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_lena.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_lena.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_lena.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_lena.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_lena.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_lena.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_lena.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_lena.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_lena.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_lena.bmp', 'bmp' );
+
+
+% % end
+%%%%%% 
+ im_num = im_num + 1;
+% % if im_num == 2
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+% % end
+% % 
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_Cameraman.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_Cameraman.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_Cameraman.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_Cameraman.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_Cameraman.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_Cameraman.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_Cameraman.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_Cameraman.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_Cameraman.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_Cameraman.bmp', 'bmp' );
+
+im_num = im_num + 1;
+% if im_num == 3
+% LRImg = imread('E:\xmliu\picture_base\graypictures\LR_airplane.tif');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_airplane.tif'));
+% 
+% %% LAZA
+% LAZA_HRImg = double(LAZA(LRImg));
+% diff_img = LAZA_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% LAZA_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% 
+% figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_airplane.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_airplane.bmp', 'bmp' );
+% % % 
+% % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% options.weight_fg = 0;%%代表用bilateral weights
+% options.our_method = double(bicubic(LRImg));
+% our_HRImg = RMLS_interpolation(LRImg,options);
+% 
+% diff_img = our_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% our_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,our_HRImg);
+% 
+% 
+% figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% 
+% title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_airplane.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_airplane.bmp', 'bmp' );
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% %% the method of lei zhang
+% esintp_HRImg = esintp(LRImg);
+% diff_img = double(esintp_HRImg)-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,esintp_HRImg);
+% 
+% figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_airplane.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_airplane.bmp', 'bmp' );
+% %% bilinear
+% bilinear_HRImg = bilinearup2(LRImg);
+% diff_img = bilinear_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bilinear_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% 
+% figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_airplane.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_airplane.bmp', 'bmp' );
+% 
+% 
+% 
+% 
+% %% bicubic
+% bicubic_HRImg = double(bicubic(LRImg));
+% diff_img = bicubic_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bicubic_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% 
+% figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% 
+% title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_airplane.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_airplane.bmp', 'bmp' );
+% end
+% 
+im_num = im_num+1;
+% % if im_num == 4
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_cap.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_cap.tif'));
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_cap.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_cap.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_cap.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_cap.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_cap.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_cap.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_cap.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_cap.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_cap.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_cap.bmp', 'bmp' );
+% % end
+% 
+im_num = im_num+1;
+% % if im_num == 5
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_flowers.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_flowers.tif'));
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_flowers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_flowers.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_flowers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_flowers.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_flowers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_flowers.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_flowers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_flowers.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_flowers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_flowers.bmp', 'bmp' );
+% % end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% % if im_num == 6
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_girl.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_girl.tif'));
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_girl.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_girl.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_girl.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_girl.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_girl.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_girl.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_girl.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_girl.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_girl.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_girl.bmp', 'bmp' );
+% % end
+%%%%%
+im_num = im_num+1;
+% if im_num == 7
+% LRImg = imread('E:\xmliu\picture_base\graypictures\LR_door.tif');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_door.tif'));
+% %% LAZA
+% LAZA_HRImg = double(LAZA(LRImg));
+% diff_img = LAZA_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% LAZA_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% 
+% figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_door.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_door.bmp', 'bmp' );
+% % % 
+% % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% options.weight_fg = 0;%%代表用bilateral weights
+% options.our_method = double(bicubic(LRImg));
+% our_HRImg = RMLS_interpolation(LRImg,options);
+% 
+% diff_img = our_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% our_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,our_HRImg);
+% 
+% 
+% figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% 
+% title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_door.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_door.bmp', 'bmp' );
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% %% the method of lei zhang
+% esintp_HRImg = esintp(LRImg);
+% diff_img = double(esintp_HRImg)-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,esintp_HRImg);
+% 
+% figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_door.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_door.bmp', 'bmp' );
+% %% bilinear
+% bilinear_HRImg = bilinearup2(LRImg);
+% diff_img = bilinear_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bilinear_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% 
+% figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_door.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_door.bmp', 'bmp' );
+% 
+% 
+% 
+% 
+% %% bicubic
+% bicubic_HRImg = double(bicubic(LRImg));
+% diff_img = bicubic_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bicubic_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% 
+% figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% 
+% title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_door.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_door.bmp', 'bmp' );
+% end
+%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% % if im_num == 8
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_peppers.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_peppers.tif'));
+% % 
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_peppers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_peppers.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_peppers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_peppers.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_peppers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_peppers.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_peppers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_peppers.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_peppers.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_peppers.bmp', 'bmp' );
+% % end
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% % if im_num == 9
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\LR_splash.tif');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_splash.tif'));
+% % 
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_splash.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_splash.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_splash.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_splash.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_splash.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_splash.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_splash.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_splash.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_splash.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_splash.bmp', 'bmp' );
+% % end
+% % 
+
+%%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% % if im_num == 10
+% % LRImg = imread('E:\xmliu\picture_base\graypictures\baboon128.bmp');
+% % original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\baboon256.bmp'));
+% % 
+% % 
+% % %% LAZA
+% % LAZA_HRImg = double(LAZA(LRImg));
+% % diff_img = LAZA_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % LAZA_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% % 
+% % figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% % title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_baboon.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_baboon.bmp', 'bmp' );
+% % % % 
+% % % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % options.weight_fg = 0;%%代表用bilateral weights
+% % options.our_method = double(bicubic(LRImg));
+% % our_HRImg = RMLS_interpolation(LRImg,options);
+% % 
+% % diff_img = our_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % our_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,our_HRImg);
+% % 
+% % 
+% % figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% % 
+% % title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% % imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_baboon.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_baboon.bmp', 'bmp' );
+% % 
+% % 
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% % %% the method of lei zhang
+% % esintp_HRImg = esintp(LRImg);
+% % diff_img = double(esintp_HRImg)-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,esintp_HRImg);
+% % 
+% % figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% % title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% % imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_baboon.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_baboon.bmp', 'bmp' );
+% % %% bilinear
+% % bilinear_HRImg = bilinearup2(LRImg);
+% % diff_img = bilinear_HRImg-original_HRImg;
+% % 
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bilinear_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% % 
+% % figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% % title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% % imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_baboon.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_baboon.bmp', 'bmp' );
+% % 
+% % 
+% % 
+% % 
+% % %% bicubic
+% % bicubic_HRImg = double(bicubic(LRImg));
+% % diff_img = bicubic_HRImg-original_HRImg;
+% % mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% % bicubic_PSNR=10*log10(255^2/mse);
+% % ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% % 
+% % figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% % 
+% % title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% % imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_baboon.bmp', 'bmp' );
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_baboon.bmp', 'bmp' );
+% % end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% if im_num == 11
+% LRImg = imread('E:\xmliu\picture_base\graypictures\tower150.png');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\tower300.png'));
+% 
+% %% LAZA
+% LAZA_HRImg = double(LAZA(LRImg));
+% diff_img = LAZA_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% LAZA_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,LAZA_HRImg);
+% 
+% figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% % figure (2+(im_num-1)*5);imshow(diff_img/255);
+% title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f', LAZA_PSNR,ssim));
+% imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_tower.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_tower.bmp', 'bmp' );
+% % % 
+% % % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% options.weight_fg = 0;%%代表用bilateral weights
+% options.our_method = double(bicubic(LRImg));
+% our_HRImg = RMLS_interpolation(LRImg,options);
+% 
+% diff_img = our_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% our_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,our_HRImg);
+% 
+% 
+% figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+% 
+% title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f', our_PSNR,ssim));
+% imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_tower.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_tower.bmp', 'bmp' );
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% %% the method of lei zhang
+% esintp_HRImg = esintp(LRImg);
+% diff_img = double(esintp_HRImg)-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,esintp_HRImg);
+% 
+% figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+% title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f', PSNR,ssim));
+% imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_tower.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_tower.bmp', 'bmp' );
+% %% bilinear
+% bilinear_HRImg = bilinearup2(LRImg);
+% diff_img = bilinear_HRImg-original_HRImg;
+% 
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bilinear_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bilinear_HRImg);
+% 
+% figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+% title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+% imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_tower.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_tower.bmp', 'bmp' );
+% 
+% 
+% 
+% 
+% %% bicubic
+% bicubic_HRImg = double(bicubic(LRImg));
+% diff_img = bicubic_HRImg-original_HRImg;
+% mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+% bicubic_PSNR=10*log10(255^2/mse);
+% ssim = ssim_index(original_HRImg,bicubic_HRImg);
+% 
+% figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+% 
+% title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+% imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_tower.bmp', 'bmp' );
+% imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_tower.bmp', 'bmp' );
+% end
+
+% %%%%%%%%%%%%%%%%%%%%%%%%
+im_num = im_num+1;
+% if im_num == 12
+% LRImg = imread('E:\xmliu\picture_base\graypictures\LR_butterfly.bmp');
+% original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\HR_butterfly.pgm'));
+% end
+if im_num == 12
+% LRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut_32.bmp'));
+% original_HRImg = double(imread('F:\图像插值期刊投稿\demo_test_code\test_picture\lenna_cut.bmp')); 
+% original_HRImg = original_HRImg(:,:,3);
+LRImg = imread('E:\xmliu\picture_base\graypictures\Cameraman128.bmp');
+original_HRImg = double(imread('E:\xmliu\picture_base\graypictures\Cameraman256.bmp'));
+end
+
+
+options.original_HRImg = original_HRImg;
+[height,width,channel] = size(LRImg);
+original_HRImg = original_HRImg(:,:,channel);
+
+
+%% LAZA
+t0_LAZA = cputime;
+LAZA_HRImg = double(LAZA(LRImg));
+diff_img = LAZA_HRImg-original_HRImg;
+
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+LAZA_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,LAZA_HRImg);
+
+time_LAZA = cputime-t0_LAZA;%(butterfly,0.56s,28.70)(cameraman,0.22s,25.60s)
+figure (1+(im_num-1)*5);imshow(LAZA_HRImg/255);
+% figure (2+(im_num-1)*5);imshow(diff_img/255);
+title(sprintf('LAZA HR image, PSNR = %2.2f dB, SSIM = %2.5f, time = %2.2f', LAZA_PSNR,ssim,time_LAZA));
+% % imwrite(uint8(LAZA_HRImg), 'E:\xmliu\result\LAZA_butterfly.bmp', 'bmp' );
+% % 
+% % diff_img = diff_img + 128;
+% % imwrite(uint8(diff_img), 'E:\xmliu\result\LAZA_diff_butterfly.bmp', 'bmp' );
+% % 
+% % %%%%%%%%%%%%%%%%RLLR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+t0 = cputime; 
+kernel = make_kernel(options.swin);
+options.kernel = kernel / sum(sum(kernel));%normalization
+
+options.weight_fg = 1;%%代表用bilateral weights
+options.our_method = double(bicubic(LRImg));
+our_HRImg = RMLS_interpolation(LRImg,options);
+
+diff_img = our_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+our_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,our_HRImg);
+
+
+figure (2+(im_num-1)*5);imshow(our_HRImg/255);
+time1=cputime-t0;%(butterfly,381.1875s,30.32)(cameraman, 105.95s,25.85)
+title(sprintf('RLLR HR image, PSNR = %2.2f dB, SSIM = %2.5f, time = %2.2f', our_PSNR,ssim,time1));
+% imwrite(uint8(our_HRImg), 'E:\xmliu\result\RLLR_butterfly.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\RLLR_diff_butterfly.bmp', 'bmp' );
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%% the method of lei zhang
+t0_DFDF = cputime;
+esintp_HRImg = esintp(LRImg);
+diff_img = double(esintp_HRImg)-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,esintp_HRImg);
+
+time_DFDF = cputime-t0_DFDF;%(butterfly,14.16s,29.67)(cameraman,5.42s,25.80)
+figure (3+(im_num-1)*5);imshow(esintp_HRImg/255);
+title(sprintf('FDI HR image, PSNR = %2.2f dB, SSIM = %2.5f, time = %2.2f', PSNR,ssim,time_DFDF));
+% imwrite(uint8(esintp_HRImg), 'E:\xmliu\result\FDI_butterfly.bmp', 'bmp' );
+% diff_img = diff_img + 128;
+% imwrite(uint8(diff_img), 'E:\xmliu\result\FDI_diff_butterfly.bmp', 'bmp' );
+%% bilinear
+bilinear_HRImg = bilinearup2(LRImg);
+diff_img = bilinear_HRImg-original_HRImg;
+
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bilinear_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,bilinear_HRImg);
+
+figure (4+(im_num-1)*5);imshow(bilinear_HRImg/255);
+title(sprintf('bilinear HR image, PSNR = %2.2f dB, SSIM = %2.5f', bilinear_PSNR,ssim));
+imwrite(uint8(bilinear_HRImg), 'E:\xmliu\result\bilinear_butterfly.bmp', 'bmp' );
+diff_img = diff_img + 128;
+imwrite(uint8(diff_img), 'E:\xmliu\result\bilinear_diff_butterfly.bmp', 'bmp' );
+
+
+
+
+%% bicubic
+bicubic_HRImg = double(bicubic(LRImg));
+diff_img = bicubic_HRImg-original_HRImg;
+mse=sum(diff_img(:).*diff_img(:))/prod(size(original_HRImg));
+bicubic_PSNR=10*log10(255^2/mse);
+ssim = ssim_index(original_HRImg,bicubic_HRImg);
+
+figure (5+(im_num-1)*5);imshow(bicubic_HRImg/255);
+
+title(sprintf('bicubic HR image, PSNR = %2.2f dB, SSIM = %2.5f', bicubic_PSNR,ssim));
+imwrite(uint8(bicubic_HRImg), 'E:\xmliu\result\bicubic_butterfly.bmp', 'bmp' );
+diff_img = diff_img + 128;
+imwrite(uint8(diff_img), 'E:\xmliu\result\bicubic_diff_butterfly.bmp', 'bmp' );
